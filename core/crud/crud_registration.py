@@ -13,12 +13,24 @@ def get_user_by_email(db: Session, email: str) -> None:
 
     Returns:
         _type_: Object sqlalchemy user email or None
-    """    
+    """
+        
     return db.query(Users).filter(Users.email == email).first()
 
 
 def create_user(db: Session, user: Registration) -> Users:
-    db_user: Users = Users(login=user.login, email=user.email, password=RegistrationUtils.hash_lib(user.password))
+    """
+    Function create User in Data Base
+
+    Args:
+        db (Session): session with db
+        user (Registration): models user(login:str, email:str, password:str, password_repeat:str)
+
+    Returns:
+        Users: ...
+    """
+        
+    db_user: Users = Users(login=user.login, email=user.email, password=RegistrationUtils.hash_lib(user.password_repeat))
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

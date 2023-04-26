@@ -3,8 +3,7 @@ from app import app
 from ..schemas import Registration
 from sqlalchemy.orm import Session
 from ..settings import get_db
-from ..crud import create_user
-import re
+from ..crud import create_user, get_user_by_email
 
 
 @app.get("/")
@@ -13,7 +12,7 @@ async def root():
 
 
 @app.post("/registration")
-async def registration(user: Registration, db: Session = Depends(get_db)):
+async def registration(user: Registration, db: Session = Depends(get_db), response_model=Registration):
     """
     Registration user in information system
 
@@ -29,7 +28,9 @@ async def registration(user: Registration, db: Session = Depends(get_db)):
     Returns:
         call create user
     """    
-    db_user = 1
+    db_user = get_user_by_email(db=db, email=user.email)
+    print(db_user.email)
+    
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
